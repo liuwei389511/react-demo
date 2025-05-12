@@ -83,8 +83,9 @@ function App() {
         setMessage((prevMessage) => [...prevMessage, obj]);
         setThink("");
       }
-    } catch (error: any) {
-      throw new Error("Error", error);
+    } catch (error: unknown) {
+      console.log("error", error);
+      throw new Error("Something went wrong");
     }
   };
 
