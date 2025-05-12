@@ -9,10 +9,15 @@ import img6 from "./assets/robot/img6.png";
 
 import "./App.css";
 
+interface Message {
+  role: "AI" | "USER";
+  content: string;
+}
+
 function App() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const [message, setMessage] = useState([
+  const [message, setMessage] = useState<Message[]>([
     {
       role: "AI",
       content:
@@ -20,11 +25,11 @@ function App() {
     },
   ]);
 
-  const [askValue, setAskValue] = useState("");
-  const [think, setThink] = useState("");
+  const [askValue, setAskValue] = useState<string>("");
+  const [think, setThink] = useState<string>("");
 
-  const handleInputChange = (event: any) => {
-    setAskValue(event.target.value); // 更新状态变量的值
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAskValue(event.target.value);
   };
 
   useEffect(() => {
@@ -32,14 +37,18 @@ function App() {
     element.scrollTop = element.scrollHeight;
   }, [message]);
 
-  const handleChat = async (e: any) => {
-    if (e.key === "Enter" || e.type === "click") {
+  const handleChat = async (
+    e:
+      | React.KeyboardEvent<HTMLInputElement>
+      | React.MouseEvent<HTMLImageElement>
+  ) => {
+    if (("key" in e && e.key === "Enter") || e.type === "click") {
       if (!askValue) return;
-      const obj = {
+      const obj: Message = {
         role: "USER",
         content: askValue,
       };
-      setMessage((prevMessage) => [...prevMessage, obj]); // 添加新元素到数组中
+      setMessage((prevMessage) => [...prevMessage, obj]);
       sendMessage();
       setAskValue("");
     }
@@ -67,9 +76,9 @@ function App() {
       });
       const result = await response.json();
       if (result?.data) {
-        const obj = {
+        const obj: Message = {
           role: "AI",
-          content: result.data.deepseekResponse, // 更新状态变量的值
+          content: result.data.deepseekResponse,
         };
         setMessage((prevMessage) => [...prevMessage, obj]);
         setThink("");
@@ -85,7 +94,7 @@ function App() {
         <h2 className="ask-title"> DeepSeekAl 聊天</h2>
         <div className="chat-container">
           <div className="chat-messages" ref={messagesEndRef}>
-            {message.map((item: any, i: number) => {
+            {message.map((item: Message, i: number) => {
               return item.role == "AI" ? (
                 <div key={"chat" + i} className="message ai-message">
                   <img src={aiIcon} alt="AI图标" />
@@ -102,17 +111,10 @@ function App() {
                       {item.content}
                     </Markdown>
                   </div>
-
                   <img src={userIcon} alt="用户图标" />
                 </div>
               );
             })}
-            {/* {answerValue && (
-              <div className="message ai-message">
-                <img src={aiIcon} alt="AI图标" />
-                <p dangerouslySetInnerHTML={{ __html: answerValue }}></p>
-              </div>
-            )} */}
           </div>
         </div>
         <div className="think">{think}</div>
@@ -122,7 +124,7 @@ function App() {
             placeholder="请输入您的问题"
             value={askValue}
             onKeyUp={handleChat}
-            onChange={handleInputChange} // 处理输入框值变化的函数
+            onChange={handleInputChange}
           />
           <img src={img6} alt="" onClick={handleChat} />
         </div>
