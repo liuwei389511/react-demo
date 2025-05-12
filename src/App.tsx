@@ -18,46 +18,21 @@ function App() {
       content:
         " Hi, 我是Deepseek AI~ 很高兴遇见你，你可以向我提问，我来帮你看看~ ",
     },
-    {
-      role: "AI",
-      content:
-        " Hi, 我是Deepseek AI~ 很高兴遇见你，你可以向我提问，我来帮你看看~ ",
-    },
-    {
-      role: "AI",
-      content:
-        " Hi, 我是Deepseek AI~ 很高兴遇见你，你可以向我提问，我来帮你看看~ ",
-    },
-    {
-      role: "AI",
-      content:
-        " Hi, 我是Deepseek AI~ 很高兴遇见你，你可以向我提问，我来帮你看看~ ",
-    },
-    {
-      role: "AI",
-      content:
-        " Hi, 我是Deepseek AI~ 很高兴遇见你，你可以向我提问，我来帮你看看~ ",
-    },
-    {
-      role: "AI",
-      content:
-        " Hi, 我是Deepseek AI~ 很高兴遇见你，你可以向我提问，我来帮你看看~ ",
-    },
   ]);
 
   const [askValue, setAskValue] = useState("");
   const [think, setThink] = useState("");
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: any) => {
     setAskValue(event.target.value); // 更新状态变量的值
   };
 
   useEffect(() => {
-    const element = messagesEndRef.current;
+    const element = messagesEndRef.current!;
     element.scrollTop = element.scrollHeight;
   }, [message]);
 
-  const handleChat = async (e) => {
+  const handleChat = async (e: any) => {
     if (e.key === "Enter" || e.type === "click") {
       if (!askValue) return;
       const obj = {
@@ -99,7 +74,7 @@ function App() {
         setMessage((prevMessage) => [...prevMessage, obj]);
         setThink("");
       }
-    } catch (error) {
+    } catch (error: any) {
       throw new Error("Error", error);
     }
   };
