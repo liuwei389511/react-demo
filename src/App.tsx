@@ -119,6 +119,12 @@ function App() {
           </div>
         </div>
         <div className="think">{think}</div>
+        {/* {answerValue && (
+              <div className="message ai-message">
+                <img src={aiIcon} alt="AI图标" />
+                <p dangerouslySetInnerHTML={{ __html: answerValue }}></p>
+              </div>
+            )} */}
         <div className="ask-text">
           <input
             type="text"
