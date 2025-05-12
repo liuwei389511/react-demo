@@ -1,4 +1,7 @@
 /** @format */
+import { useState, useRef, useEffect } from "react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import aiIcon from "./assets/robot/ai-icon.png";
 import userIcon from "./assets/robot/user-icon.png";
@@ -7,20 +10,97 @@ import img6 from "./assets/robot/img6.png";
 import "./App.css";
 
 function App() {
-  const message: any = [
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const [message, setMessage] = useState([
     {
       role: "AI",
       content:
-        " Hi, 我是AI大模型~ <br />很高兴遇见你你可以向我提问，我来帮你看看~ ",
+        " Hi, 我是Deepseek AI~ 很高兴遇见你，你可以向我提问，我来帮你看看~ ",
     },
-  ];
-  const answerValue: string = "";
+    {
+      role: "AI",
+      content:
+        " Hi, 我是Deepseek AI~ 很高兴遇见你，你可以向我提问，我来帮你看看~ ",
+    },
+    {
+      role: "AI",
+      content:
+        " Hi, 我是Deepseek AI~ 很高兴遇见你，你可以向我提问，我来帮你看看~ ",
+    },
+    {
+      role: "AI",
+      content:
+        " Hi, 我是Deepseek AI~ 很高兴遇见你，你可以向我提问，我来帮你看看~ ",
+    },
+    {
+      role: "AI",
+      content:
+        " Hi, 我是Deepseek AI~ 很高兴遇见你，你可以向我提问，我来帮你看看~ ",
+    },
+    {
+      role: "AI",
+      content:
+        " Hi, 我是Deepseek AI~ 很高兴遇见你，你可以向我提问，我来帮你看看~ ",
+    },
+  ]);
 
-  const handleChat = (e: any) => {
-    if (e.key === "Enter") {
-      // 处理回车键事件
-      console.log("Enter key pressed");
-      // 例如，提交表单或者执行其他操作
+  const [askValue, setAskValue] = useState("");
+  const [think, setThink] = useState("");
+
+  const handleInputChange = (event) => {
+    setAskValue(event.target.value); // 更新状态变量的值
+  };
+
+  useEffect(() => {
+    const element = messagesEndRef.current;
+    element.scrollTop = element.scrollHeight;
+  }, [message]);
+
+  const handleChat = async (e) => {
+    if (e.key === "Enter" || e.type === "click") {
+      if (!askValue) return;
+      const obj = {
+        role: "USER",
+        content: askValue,
+      };
+      setMessage((prevMessage) => [...prevMessage, obj]); // 添加新元素到数组中
+      sendMessage();
+      setAskValue("");
+    }
+  };
+
+  const sendMessage = async () => {
+    setThink("思考中......");
+    const apiUrl: string = "https://workertest.liuwei3895.workers.dev/graphql";
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: `
+            query sampleDeepseekQuery($prompt:String!){
+                deepseekResponse: askDeepseek(prompt: $prompt)
+            }
+            `,
+          variables: {
+            prompt: askValue,
+          },
+        }),
+      });
+      const result = await response.json();
+      if (result?.data) {
+        const obj = {
+          role: "AI",
+          content: result.data.deepseekResponse, // 更新状态变量的值
+        };
+        setMessage((prevMessage) => [...prevMessage, obj]);
+        setThink("");
+      }
+    } catch (error) {
+      throw new Error("Error", error);
     }
   };
 
@@ -29,34 +109,45 @@ function App() {
       <div className="ask">
         <h2 className="ask-title"> DeepSeekAl 聊天</h2>
         <div className="chat-container">
-          <div className="chat-messages">
+          <div className="chat-messages" ref={messagesEndRef}>
             {message.map((item: any, i: number) => {
               return item.role == "AI" ? (
                 <div key={"chat" + i} className="message ai-message">
                   <img src={aiIcon} alt="AI图标" />
-                  <p dangerouslySetInnerHTML={{ __html: item.content }}></p>
+                  <div className="message-content">
+                    <Markdown remarkPlugins={[remarkGfm]}>
+                      {item.content}
+                    </Markdown>
+                  </div>
                 </div>
               ) : (
-                <div key={"chat" + i} className="message user-message" v-else>
-                  <p dangerouslySetInnerHTML={{ __html: item.content }}></p>
+                <div key={"chat" + i} className="message user-message">
+                  <div className="message-content">
+                    <Markdown remarkPlugins={[remarkGfm]}>
+                      {item.content}
+                    </Markdown>
+                  </div>
+
                   <img src={userIcon} alt="用户图标" />
                 </div>
               );
             })}
-            {answerValue && (
+            {/* {answerValue && (
               <div className="message ai-message">
                 <img src={aiIcon} alt="AI图标" />
                 <p dangerouslySetInnerHTML={{ __html: answerValue }}></p>
               </div>
-            )}
+            )} */}
           </div>
         </div>
+        <div className="think">{think}</div>
         <div className="ask-text">
           <input
             type="text"
             placeholder="请输入您的问题"
-            v-model="askValue"
+            value={askValue}
             onKeyUp={handleChat}
+            onChange={handleInputChange} // 处理输入框值变化的函数
           />
           <img src={img6} alt="" onClick={handleChat} />
         </div>
