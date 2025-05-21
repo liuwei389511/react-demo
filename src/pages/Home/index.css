@@ -1,1 +1,16 @@
 /** @format */
+.homepage {
+  text-align: center;
+  font-size: 60px;
+  div:nth-child(1) {
+    color: #007bff;
+  }
+  div:nth-child(2) {
+    font-size: 20px;
+    color: #007bff;
+  }
+  div:nth-child(3) {
+    font-size: 40px;
+    color: #007bff;
+  }
+}

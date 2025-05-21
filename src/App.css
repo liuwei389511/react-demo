@@ -9,6 +9,7 @@
   flex-direction: column;
   align-items: center;
   background-color: #fff;
+  box-shadow: 0 4px 20px 0 #00000014;
   div,
   a {
     display: inline-block;
@@ -19,15 +20,14 @@
     align-items: center;
     cursor: pointer;
     color: #000;
-    border-bottom: 1px solid #dfdfdf;
+    border-bottom: 1px solid #f2f2f2;
   }
   div {
     background-color: #fff;
   }
   .active {
-    box-shadow: 0 4px 20px 0 #00000014;
     a {
-      color: aquamarine !important;
+      color: #007bff !important;
     }
   }
 }
